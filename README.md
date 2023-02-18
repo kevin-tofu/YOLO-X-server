@@ -6,8 +6,8 @@
 
 | Route | Method | Query / Body | Description |
 | --- | --- | --- | --- |
-| /coco_video | POST | - | Post a video(.mp4 ) to get bboxes. The Data is described in COCO format. |
 | /coco_image | POST | - | Post an image(.mp4 ) to get bboxes. The Data is described in COCO format. |
+| /coco_video | POST | - | Post a video(.mp4 ) to get bboxes. The Data is described in COCO format. |
 | /categories | GET | - | GET categories of detected objects with id, name and super-category . |
 
 ## Environment variables
