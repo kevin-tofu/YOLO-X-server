@@ -15,7 +15,7 @@
 | Variable | required | Description |
 | --- | --- | --- |
 | APP_PORT | false | The port to which the application listens to, default is set to 80 |
-| PATH_MODEL | false | Directry name where to save data. |
+| PATH_MODEL | false | Path name for model. |
 
 ## How to Run
 
