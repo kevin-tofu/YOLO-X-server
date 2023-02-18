@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 import onnxruntime as ort
 import MediaHandler
-from typing import NamedTuple
+from typing import NamedTuple, Literal
 from controllers import functions as func
 import coco_formatter
 
@@ -15,8 +15,6 @@ class myProcessor(MediaHandler.Processor):
     def __init__(self, cfg: NamedTuple):
         super().__init__()
 
-        # path_models = f"./model/{_config.YOLO_NAME}"
-        path_model = f"./model/yolox_m.onnx"
         path_model = cfg.path_model
         ort_session = ort.InferenceSession(path_model)
         ort_session.get_modelmeta()
@@ -30,30 +28,25 @@ class myProcessor(MediaHandler.Processor):
             with open(cfg.path_categories, 'rb') as f:
                 self.categories = json.load(f)
         
-        print(self.categories, len(self.categories))
+        # print(self.categories, len(self.categories))
         self.cvt_catid = lambda catid: self.categories[catid]['id']
 
+    
+    def get_categories(self):
+        return self.categories
 
-    async def post_file_process(
-        self, \
-        process_name: str, \
-        fpath_org: str, \
-        fpath_dst: Optional[str] = None, \
-        **kwargs
-    ) -> dict:
-        
-        if process_name == "video":
-            return dict(status = "OK")
-        
+  
     
     async def post_BytesIO_process(
         self, \
-        process_name :str, \
+        process_name : Literal['image-bytesio'], \
         fBytesIO: io.BytesIO, \
         fname_org: str,\
         extension: str = 'jpg',\
         **kwargs
     ):
+        if process_name != 'image-bytesio':
+            raise ValueError('error')
 
         img_pil = PIL.Image.open(fBytesIO)
         img_np = np.asarray(img_pil)
@@ -68,14 +61,36 @@ class myProcessor(MediaHandler.Processor):
             file_name = fname_org
         )]
 
-        annotations = func.coco_image(
+        annotations = func.detection_image(
             self.session,
             img_np,
             (640, 640),
-            convert_catid=self.cvt_catid
+            convert_catid=self.cvt_catid,
+            th_conf = kwargs['th_conf'],
+            th_nms = kwargs['th_nms']
         )
         
         return dict(
             images = images,
             annotations = annotations
         )
+
+
+    async def post_file_process(
+        self, \
+        process_name: Literal['video'], \
+        fpath_org: str, \
+        fpath_dst: Optional[str] = None, \
+        **kwargs
+    ) -> dict:
+
+        ret = func.detection_video(
+            self.session,
+            fpath_org,
+            (640, 640),
+            convert_catid=self.cvt_catid,
+            th_conf = kwargs['th_conf'],
+            th_nms = kwargs['th_nms']
+        )
+
+        return ret
