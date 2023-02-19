@@ -1,7 +1,7 @@
 # YOLO-X Server
 
  This web server provides WEB-API for object detection model.  
-Although the name of this repository is "YOLO-X server", general object detection model can be used on this server if the output of models is having common format. Because of any types of YOLO(Object Detection model) can be used, the repository is named to 'YOLO-X Server'.  
+Although the name of this repository is "YOLO-X server", general object detection model can be used on this server if the output of models is having common format. Because of any types of YOLO(Object Detection model) can be used, the repository is named to 'YOLO-X (any type of yolo or object detection) Server'.  
 
 ## Use YOLOX as Example
 
