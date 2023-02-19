@@ -15,23 +15,30 @@ class myProcessor(MediaHandler.Processor):
     def __init__(self, cfg: NamedTuple):
         super().__init__()
 
-        path_model = cfg.path_model
+        self.load_model(cfg.path_model)
+        
+        if cfg.path_categories == '' or cfg.path_categories == 'coco':
+            self.load_categories()
+        else:
+            self.load_categories(cfg.path_categories)
+        
+        # print(self.categories, len(self.categories))
+        self.cvt_catid = lambda catid: self.categories[catid]['id']
+
+    def load_model(self, fpath_model: str):
         ort_session = ort.InferenceSession(path_model)
         ort_session.get_modelmeta()
         # input_name = ort_session.get_inputs()
         # output_name = ort_session.get_outputs()
         self.session = ort_session
 
-        if cfg.path_categories == '' or cfg.path_categories == 'coco':
+    def load_categories(self, fpath: Optional[str]):
+        if fpath is None:
             self.categories = coco_formatter.get_categories()
         else:
             with open(cfg.path_categories, 'rb') as f:
                 self.categories = json.load(f)
-        
-        # print(self.categories, len(self.categories))
-        self.cvt_catid = lambda catid: self.categories[catid]['id']
-
-    
+                
     def get_categories(self):
         return self.categories
 
