@@ -48,8 +48,6 @@ async def image(
         **params
     )
 
-
-
 @router.post('/coco_video')
 async def video(
     file: UploadFile = File(...), \
@@ -67,3 +65,32 @@ async def video(
         **params
     )
 
+@router.post("/coco_image/")
+async def redirect_coco_image(
+    file: UploadFile = File(...), \
+    bgtask: BackgroundTasks = BackgroundTasks(),\
+    params: dict = Depends(params_detector)
+):
+    return await handler.post_file_BytesIO(
+        "image-bytesio", \
+        file, \
+        bgtask, \
+        **params
+    )
+
+@router.post("/coco_video/")
+async def redirect_coco_video(
+    file: UploadFile = File(...), \
+    bgtask: BackgroundTasks = BackgroundTasks(),\
+    params: dict = Depends(params_detector)
+):
+    return await handler.post_file(
+        "video", 
+        file, 
+        "json", 
+        bgtask, 
+        **params
+    )
+@router.get("/categories/")
+async def redirect_categories():
+    return handler.processor.get_categories()

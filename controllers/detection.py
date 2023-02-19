@@ -9,7 +9,8 @@ import MediaHandler
 from typing import NamedTuple, Literal
 from controllers import functions as func
 import coco_formatter
-
+from logconf import mylogger
+logger = mylogger(__name__)
 
 class myProcessor(MediaHandler.Processor):
     def __init__(self, cfg: NamedTuple):
@@ -25,14 +26,14 @@ class myProcessor(MediaHandler.Processor):
         # print(self.categories, len(self.categories))
         self.cvt_catid = lambda catid: self.categories[catid]['id']
 
-    def load_model(self, fpath_model: str):
+    def load_model(self, path_model: str):
         ort_session = ort.InferenceSession(path_model)
         ort_session.get_modelmeta()
         # input_name = ort_session.get_inputs()
         # output_name = ort_session.get_outputs()
         self.session = ort_session
 
-    def load_categories(self, fpath: Optional[str]):
+    def load_categories(self, fpath: Optional[str]=None):
         if fpath is None:
             self.categories = coco_formatter.get_categories()
         else:
@@ -52,9 +53,8 @@ class myProcessor(MediaHandler.Processor):
         extension: str = 'jpg',\
         **kwargs
     ):
-        if process_name != 'image-bytesio':
-            raise ValueError('error')
 
+        logger.info(f"process - {process_name}")
         img_pil = PIL.Image.open(fBytesIO)
         img_np = np.asarray(img_pil)
         # print(img_np.shape) # (h, w, 3)
@@ -91,6 +91,8 @@ class myProcessor(MediaHandler.Processor):
         **kwargs
     ) -> dict:
 
+        logger.info(f"process - {process_name}")
+        
         ret = func.detection_video(
             self.session,
             fpath_org,
