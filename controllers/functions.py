@@ -131,7 +131,7 @@ def detection_video(
             break
 
         coco_image = coco_formatter.create_image(
-            id = 0,
+            id = imgid,
             width = image.shape[1],
             height = image.shape[0],
             file_name = os.path.basename(fpath)
@@ -149,7 +149,6 @@ def detection_video(
 
         ann_image_list.append(coco_image)
         ann_annotation_list.extend(coco_annotations)
-
 
         imgid += 1
         annids = coco_annotations[-1]['id'] + 1
