@@ -47,20 +47,11 @@ python server.py --port 3333
       onUploadProgress: (event) => {
         progress_value.value = Math.round( max_progress_value * event.loaded / event.total)
       },
-    }
-
-    if (timeout !== undefined){  
-      config_post["timeout"] = timeout
-    }
-
-    if (c_params.value !== undefined){
-      config_post["params"] = Object.assign(
-        {}, 
-        ...c_params.value.map( 
-          function(data_loop) {
-            return {[data_loop.label]: data_loop.value}
-          })
-      )
+      params: {
+        th_conf: 0.5,
+        th_nms: 0.5
+      }
+      timeout: 60000
     }
 
     axios.post(url_post, fd, config_post).then(res_post => {
