@@ -50,7 +50,7 @@ python server.py --port 3333
       params: {
         th_conf: 0.5,
         th_nms: 0.5
-      }
+      },
       timeout: 60000
     }
 
