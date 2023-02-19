@@ -1,8 +1,18 @@
 # YOLO-X Server
 
-## WebAPI for YOLO-series model  
+ This web server provides WEB-API for object detection model.  
+Although the name of this repository is "YOLO-X server", general object detection model can be used on this server if the output of models is having common format. Because of any types of YOLO(Object Detection model) can be used, the repository is named to 'YOLO-X Server'.  
 
-## API
+## Use YOLOX as Example
+
+ Lets use YOLOX as an example <https://github.com/Megvii-BaseDetection/YOLOX>.  
+Since this repository has onnx-conversion function and converted model weight itself<https://yolox.readthedocs.io/en/latest/demo/onnx_readme.html>, the model is easy to be introduced.  
+
+```bash
+docker build ./ --build-arg URL_MODEL=https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx
+```
+
+## WebAPI for YOLO-series model  
 
 | Route | Method | Query / Body | Description |
 | --- | --- | --- | --- |
