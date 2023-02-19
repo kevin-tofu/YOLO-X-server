@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME_YOLO_X}
+  namespace: ${KUBERNETES_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APP_NAME_YOLO_X}
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME_YOLO_X}
+    spec:
+      containers:
+      - name: ${APP_NAME_YOLO_X}
+        image: ${CONTAINER_IMAGE_YOLO_X}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: PATH_MODEL
+          value: ./model/yolox_m.onnx
+---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: ${APP_NAME_YOLO_X}
+#   namespace: ${KUBERNETES_NAMESPACE}
+# spec:
+#   ports:
+#   - port: 80
+#     nodePort: ${KUBERNETES_PORT}
+#   selector:
+#     app: ${APP_NAME_YOLO_X}
+#   type: NodePort
