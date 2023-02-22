@@ -63,8 +63,9 @@ def detection_image(
             # id_class = det_list[5]
             id_class = convert_catid(int(det_list[5]))
             # print(filter_cat, id_class)
-            if not id_class in filter_cat:
-                continue
+            if not filter_cat is None:
+                if not id_class in filter_cat:
+                    continue
             
             bbox, score = det_list[:4], det_list[4]
             # print('id_class', id_class)

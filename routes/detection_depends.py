@@ -9,7 +9,7 @@ async def params_detector(
     test: Optional[int] = None
 ) -> dict:
     
-    print('filter_cat : ', filter_cat)
+    # print('filter_cat : ', filter_cat)
     ret = dict(
         th_conf = th_conf, \
         th_nms = th_nms, \
