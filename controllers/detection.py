@@ -49,13 +49,14 @@ class myProcessor(MediaHandler.Processor):
 
     def patch_model(
         self, 
-        fBytesIO: io.BytesIO,
+        path_model: str,
         **kwargs
     ):
         # del self.session
         # with open(self.cfg.path_model, 'wb') as f:
         #     f.write(fBytesIO)
-        self.load_model(self.cfg.path_model)
+        # self.load_model(self.cfg.path_model)
+        self.load_model(path_model)
         
     def get_categories(self):
         return self.categories

@@ -25,14 +25,14 @@ handler = MediaHandler.Router(
 router = APIRouter(prefix="")
 
 @router.get('/model-info')
-async def get_categories(
+async def get_model_info(
 ):  
     """
     """
     return handler.processor.get_model_info()
 
 @router.patch('/model')
-async def patch_categories(
+async def patch_model(
     file: UploadFile = File(...), \
     bgtask: BackgroundTasks = BackgroundTasks(),\
     params: dict = Depends(params_model)
