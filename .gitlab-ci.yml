@@ -1,0 +1,69 @@
+stages:
+  - build
+  - test
+  - deployment
+
+variables:
+  APP_NAME_YOLO_X: yolo-x-server
+  VERSION_YOLO_X: v0
+  # VERSION: ${CI_COMMIT_SHORT_SHA}
+  CONTAINER_IMAGE_YOLO_X: ${CONTAINER_STORE}/${APPLICATION_NAME}:${VERSION_YOLO_X}
+  GIT_SUBMODULE_STRATEGY: recursive # it needs for importing submodules
+
+image: docker:19.03.12-dind
+build-job:
+  stage: build
+  rules:
+    # - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == "master"
+    # - if: $CI_COMMIT_BRANCH == "build"
+  
+  tags:
+    - myshell
+  
+  before_script:
+    - docker ps
+    - echo ${STORE_PASSWORD} | docker login --username ${STORE_USERNAME} --password-stdin
+
+  script:
+    - > 
+      docker build ./ 
+        --build-arg URL_MODEL=https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx
+        -t ${CONTAINER_IMAGE_YOLO_X}
+    - docker push ${CONTAINER_IMAGE_YOLO_X}
+    - docker rmi ${CONTAINER_IMAGE_YOLO_X}
+
+test:
+  stage: test
+  rules:
+    # - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == "master"
+  tags:
+    - myshell
+  before_script:
+    - echo ${STORE_PASSWORD} | docker login --username ${STORE_USERNAME} --password-stdin
+    
+  script:
+    - > 
+      docker run -t --rm 
+      --name yolo_x_server
+      --env APP_PORT=3333
+      -p 3333:80 ${CONTAINER_IMAGE_YOLO_X} python test_server.py
+
+
+deployment-job:
+  stage: deployment
+  rules:
+  - if: '$CI_COMMIT_BRANCH == "master"'
+  - if: '$CI_COMMIT_BRANCH == "deployment"'
+  tags:
+    - myshell
+  before_script:
+    - echo ${STORE_PASSWORD} | docker login --username ${STORE_USERNAME} --password-stdin
+  script:
+    - envsubst < kubernetes_manifest.yml | kubectl apply -f -
+    - kubectl rollout restart deployment/${APP_NAME_YOLO_X}
+  environment:
+    name: production
+    kubernetes:
+      namespace: ${KUBERNETES_NAMESPACE}
