@@ -9,7 +9,11 @@ Although the name of this repository is "YOLO-X server", general object detectio
 Since this repository has onnx-conversion function and converted model weight itself<https://yolox.readthedocs.io/en/latest/demo/onnx_readme.html>, the model is easy to be introduced.  
 
 ```bash
-docker build ./ --build-arg URL_MODEL=https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx
+docker build ./ --build-arg URL_MODEL=https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx -t yolo-server
+```
+
+```bash
+docker run -it -d --name yolox -p 5500:80 yolo-server
 ```
 
 ## WebAPI for YOLO-series model  

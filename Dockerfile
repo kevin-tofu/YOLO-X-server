@@ -2,15 +2,22 @@
 ARG registry=fukouhei001
 # FROM ${registry}/opencv-python3-8:v1
 # FROM node:12.13.0-alpine as build
-FROM python:3.8-slim-buster
+# FROM python:3.8-slim-buster
+FROM python:3.10-slim-buster
 ARG URL_MODEL="https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx"
+# ARG HTTP_PROXY=""
+# ARG HTTPS_PROXY=""
 # ARG fpath_model="./model/yolox_m.onnx"
+
+# ENV http_proxy HTTP_PROXY
+# ENV https_proxy HTTPS_PROXY
 
 WORKDIR /myapp
 RUN apt-get update -y
 RUN apt-get upgrade -y
 
-RUN apt install -y ffmpeg
+RUN apt-get install -y ffmpeg
+RUN apt-get install -y wget
 RUN mkdir model
 RUN wget -P ./model/ ${URL_MODEL}
 # RUN mv ./model/

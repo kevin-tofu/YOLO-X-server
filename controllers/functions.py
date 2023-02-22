@@ -22,7 +22,8 @@ def detection_image(
     ann_id_base: int=0,
     convert_catid: Callable[[int], int]=lambda a: a,
     th_conf: float=0.5,
-    th_nms: float=0.5
+    th_nms: float=0.5,
+    filter_cat: Optional[list[int]] = None
 ):
     """
     """
@@ -56,10 +57,16 @@ def detection_image(
     anns = []
 
     if dets is not None:
-        final_boxes, final_scores, final_cls_inds = dets[:, :4], dets[:, 4], dets[:, 5]
+        # final_boxes, final_scores, final_cls_inds = dets[:, :4], dets[:, 4], dets[:, 5]
         for loop, det in enumerate(dets):
             det_list = det.tolist()
-            bbox, score, id_class = det_list[:4], det_list[4], det_list[5]
+            # id_class = det_list[5]
+            id_class = convert_catid(int(det_list[5]))
+            # print(filter_cat, id_class)
+            if not id_class in filter_cat:
+                continue
+            
+            bbox, score = det_list[:4], det_list[4]
             # print('id_class', id_class)
             bbox = x1y1x2y2_x1y1wh(bbox)
             anns.append(
@@ -75,7 +82,7 @@ def detection_image(
                 coco_formatter.create_annotation_bbox(
                     id = loop + ann_id_base, 
                     image_id = image_id, 
-                    category_id = convert_catid(int(id_class)), 
+                    category_id = id_class, 
                     area = bbox[2]*bbox[3], 
                     bbox = bbox, 
                     score=score
@@ -99,7 +106,8 @@ def detection_video(
     ann_id_base: int=0,
     convert_catid: Callable[[int], int]=lambda a: a,
     th_conf: float=0.5,
-    th_nms: float=0.5
+    th_nms: float=0.5,
+    filter_cat: Optional[list[int]] = None
 ):
 
     cap = cv2.VideoCapture(fpath)

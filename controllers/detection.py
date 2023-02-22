@@ -74,7 +74,8 @@ class myProcessor(MediaHandler.Processor):
             (640, 640),
             convert_catid=self.cvt_catid,
             th_conf = kwargs['th_conf'],
-            th_nms = kwargs['th_nms']
+            th_nms = kwargs['th_nms'],
+            filter_cat = kwargs['filter_cat']
         )
         
         return dict(
@@ -99,7 +100,8 @@ class myProcessor(MediaHandler.Processor):
             (640, 640),
             convert_catid=self.cvt_catid,
             th_conf = kwargs['th_conf'],
-            th_nms = kwargs['th_nms']
+            th_nms = kwargs['th_nms'],
+            filter_cat = kwargs['filter_cat']
         )
 
         return ret
