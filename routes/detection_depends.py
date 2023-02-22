@@ -17,3 +17,12 @@ async def params_detector(
         test = test
     )
     return ret
+
+async def params_model(
+    test: Optional[int] = None
+) -> dict:
+    
+    ret = dict(
+        test = test
+    )
+    return ret

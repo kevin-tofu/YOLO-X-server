@@ -9,6 +9,7 @@ import MediaHandler
 from typing import NamedTuple, Literal
 from controllers import functions as func
 import coco_formatter
+from fastapi import BackgroundTasks
 from logconf import mylogger
 logger = mylogger(__name__)
 
@@ -16,6 +17,7 @@ class myProcessor(MediaHandler.Processor):
     def __init__(self, cfg: NamedTuple):
         super().__init__()
 
+        self.cfg = cfg
         self.load_model(cfg.path_model)
         
         if cfg.path_categories == '' or cfg.path_categories == 'coco':
@@ -39,22 +41,31 @@ class myProcessor(MediaHandler.Processor):
         else:
             with open(cfg.path_categories, 'rb') as f:
                 self.categories = json.load(f)
-                
+
+    def get_model_info(self):
+        return dict(
+            path_model=self.cfg.path_model
+        )
+
+    def patch_model(
+        self, 
+        fBytesIO: io.BytesIO,
+        **kwargs
+    ):
+        # del self.session
+        # with open(self.cfg.path_model, 'wb') as f:
+        #     f.write(fBytesIO)
+        self.load_model(self.cfg.path_model)
+        
     def get_categories(self):
         return self.categories
 
-  
-    
-    async def post_BytesIO_process(
-        self, \
-        process_name : Literal['image-bytesio'], \
+    def coco_image(
+        self,
         fBytesIO: io.BytesIO, \
         fname_org: str,\
-        extension: str = 'jpg',\
         **kwargs
     ):
-
-        logger.info(f"process - {process_name}")
         img_pil = PIL.Image.open(fBytesIO)
         img_np = np.asarray(img_pil)
         # print(img_np.shape) # (h, w, 3)
@@ -82,11 +93,29 @@ class myProcessor(MediaHandler.Processor):
             images = images,
             annotations = annotations
         )
+    
+    async def post_BytesIO_process(
+        self, \
+        process_name : Literal['image-bytesio'], \
+        fBytesIO: io.BytesIO, \
+        fname_org: str,\
+        extension: str = 'jpg',\
+        **kwargs
+    ):
 
+        logger.info(f"process - {process_name}")
+
+        # if process_name == 'image-bytesio':
+        return self.coco_image(
+            fBytesIO,
+            fname_org,
+            **kwargs
+        )
+    
 
     async def post_file_process(
         self, \
-        process_name: Literal['video'], \
+        process_name: Literal['video', 'patch-model'], \
         fpath_org: str, \
         fpath_dst: Optional[str] = None, \
         **kwargs
@@ -94,14 +123,21 @@ class myProcessor(MediaHandler.Processor):
 
         logger.info(f"process - {process_name}")
         
-        ret = func.detection_video(
-            self.session,
-            fpath_org,
-            (640, 640),
-            convert_catid=self.cvt_catid,
-            th_conf = kwargs['th_conf'],
-            th_nms = kwargs['th_nms'],
-            filter_categories = kwargs['filter_categories']
-        )
+        if process_name == 'video':
+            ret = func.detection_video(
+                self.session,
+                fpath_org,
+                (640, 640),
+                convert_catid=self.cvt_catid,
+                th_conf = kwargs['th_conf'],
+                th_nms = kwargs['th_nms'],
+                filter_categories = kwargs['filter_categories']
+            )
 
-        return ret
+            return ret
+        elif process_name == 'patch-model':
+            self.patch_model(
+                fpath_org,
+                **kwargs
+            )
+            return dict(status='OK')

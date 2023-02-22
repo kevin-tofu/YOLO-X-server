@@ -41,7 +41,28 @@ docker run -it -d --name yolox -p 5500:80 yolo-server
 python server.py --port 3333
 ```
 
-## Code Example using axios
+### using requests, Python
+
+```python
+
+import requests
+
+params = dict(
+    filter_categories = [1, 2],
+    th_conf = 0.3,
+    th_nms = 0.3
+)
+with open(f"{path_data}/{name_image}", "rb") as f:
+    res = requests.post(
+        "/coco_video", 
+        params=params,
+        files={"file": (f"{name_image}", f, "image/jpg")}
+    )
+coco_data = res.json()
+print(coco_data)
+```
+
+### using Axios, Vue3
 
 ```javascript
   let isConverted = ref(false)

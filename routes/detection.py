@@ -12,7 +12,7 @@ import cv2
 import numpy as np
 from config import config_org
 
-from routes.detection_depends import params_detector
+from routes.detection_depends import params_detector, params_model
 
 test_config = dict(
     PATH_DATA = "./temp"
@@ -23,6 +23,29 @@ handler = MediaHandler.Router(
     MediaHandler.Config(**test_config)
 )
 router = APIRouter(prefix="")
+
+@router.get('/model-info')
+async def get_categories(
+):  
+    """
+    """
+    return handler.processor.get_model_info()
+
+@router.patch('/model')
+async def patch_categories(
+    file: UploadFile = File(...), \
+    bgtask: BackgroundTasks = BackgroundTasks(),\
+    params: dict = Depends(params_model)
+):  
+    """
+    """
+    
+    return await handler.post_file(
+        "patch-model", \
+        file, \
+        bgtask=bgtask, \
+        **params
+    )
 
 @router.get('/categories')
 async def get_categories(
