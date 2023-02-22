@@ -23,7 +23,7 @@ def detection_image(
     convert_catid: Callable[[int], int]=lambda a: a,
     th_conf: float=0.5,
     th_nms: float=0.5,
-    filter_cat: Optional[list[int]] = None
+    filter_categories: Optional[list[int]] = None
 ):
     """
     """
@@ -62,9 +62,9 @@ def detection_image(
             det_list = det.tolist()
             # id_class = det_list[5]
             id_class = convert_catid(int(det_list[5]))
-            # print(filter_cat, id_class)
-            if not filter_cat is None:
-                if not id_class in filter_cat:
+            # print(filter_categories, id_class)
+            if not filter_categories is None:
+                if not id_class in filter_categories:
                     continue
             
             bbox, score = det_list[:4], det_list[4]
@@ -108,7 +108,7 @@ def detection_video(
     convert_catid: Callable[[int], int]=lambda a: a,
     th_conf: float=0.5,
     th_nms: float=0.5,
-    filter_cat: Optional[list[int]] = None
+    filter_categories: Optional[list[int]] = None
 ):
 
     cap = cv2.VideoCapture(fpath)
