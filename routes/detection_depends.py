@@ -19,10 +19,12 @@ async def params_detector(
     return ret
 
 async def params_model(
+    imsize: Optional[list[int]] = Query(None), \
     test: Optional[int] = None
 ) -> dict:
     
     ret = dict(
+        imsize=imsize,
         test = test
     )
     return ret

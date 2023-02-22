@@ -7,6 +7,8 @@ APP_PORT = os.getenv('APP_PORT', 80)
 PATH_DATA = os.getenv('PATH_DATA', './temp')
 PATH_MODEL = os.getenv('PATH_MODEL', f"./model/yolox_m.onnx")
 PATH_CATEGORIES = os.getenv('PATH_CATEGORIES', '')
+IMSIZE_HEIGHT = int(os.getenv('IMSIZE_HEIGHT', '640'))
+IMSIZE_WIDTH = int(os.getenv('IMSIZE_WIDTH', '640'))
 
 
 class Config(NamedTuple):
@@ -14,11 +16,15 @@ class Config(NamedTuple):
     path_model: str
     path_data: str
     path_categories: str
+    imsize_height: int
+    imsize_width: int
     
 
 config_org = Config(
     APP_PORT,
     PATH_MODEL,
     PATH_DATA,
-    PATH_CATEGORIES
+    PATH_CATEGORIES,
+    IMSIZE_HEIGHT,
+    IMSIZE_WIDTH
 )

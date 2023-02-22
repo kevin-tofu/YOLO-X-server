@@ -19,7 +19,7 @@ class myProcessor(MediaHandler.Processor):
 
         self.cfg = cfg
         self.load_model(cfg.path_model)
-        
+        self.imsize = (cfg.imsize_height, cfg.imsize_width)
         if cfg.path_categories == '' or cfg.path_categories == 'coco':
             self.load_categories()
         else:
@@ -57,6 +57,11 @@ class myProcessor(MediaHandler.Processor):
         #     f.write(fBytesIO)
         # self.load_model(self.cfg.path_model)
         self.load_model(path_model)
+        if 'imsize' in kwargs:
+            if type(kwargs['imsize']) is list:
+                assert len(kwargs['imsize']) == 2
+                self.imsize = kwargs['imsize']
+                print(self.imsize, kwargs['imsize'])
         
     def get_categories(self):
         return self.categories
@@ -83,7 +88,7 @@ class myProcessor(MediaHandler.Processor):
         annotations = func.detection_image(
             self.session,
             img_np,
-            (640, 640),
+            self.imsize,
             convert_catid=self.cvt_catid,
             th_conf = kwargs['th_conf'],
             th_nms = kwargs['th_nms'],
