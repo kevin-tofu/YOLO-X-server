@@ -58,7 +58,8 @@ def detection_image(
 
     if dets is not None:
         # final_boxes, final_scores, final_cls_inds = dets[:, :4], dets[:, 4], dets[:, 5]
-        for loop, det in enumerate(dets):
+        idloop = 0
+        for det in dets:
             det_list = det.tolist()
             # id_class = det_list[5]
             id_class = convert_catid(int(det_list[5]))
@@ -81,7 +82,7 @@ def detection_image(
                 #     iscrowd = 0
                 # )
                 coco_formatter.create_annotation_bbox(
-                    id = loop + ann_id_base, 
+                    id = idloop + ann_id_base, 
                     image_id = image_id, 
                     category_id = id_class, 
                     area = bbox[2]*bbox[3], 
@@ -89,6 +90,7 @@ def detection_image(
                     score=score
                 )
             )
+            idloop += 1
     
     # ret = dict(
     #     annotations=anns
@@ -153,16 +155,16 @@ def detection_video(
             ann_id_base = annids,
             convert_catid = convert_catid,
             th_conf=th_conf,
-            th_nms=th_nms
+            th_nms=th_nms,
+            filter_categories=filter_categories
         )
 
         ann_image_list.append(coco_image)
-        ann_annotation_list.extend(coco_annotations)
-
         imgid += 1
-        annids = coco_annotations[-1]['id'] + 1
-        
-        
+        if len(coco_annotations) > 0:
+            ann_annotation_list.extend(coco_annotations)
+            annids = coco_annotations[-1]['id'] + 1
+
         # if kwargs['process'] == 'detection-drawing':
         #     image_visualize = visualize.draw_bbox2img(np.asarray(image_rgb), ann_bbox_list_temp, th=kwargs["th_conf"])
         #     image_visualize = cv2.cvtColor(image_visualize, cv2.COLOR_RGB2BGR)
