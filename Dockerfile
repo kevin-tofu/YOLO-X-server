@@ -28,8 +28,8 @@ RUN apt-get install -y git
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN pip install git+https://github.com/kevin-tofu/MediaHandler.git@master
-RUN pip install git+https://github.com/kevin-tofu/coco_formatter.git@main
+# RUN pip install git+https://github.com/kevin-tofu/MediaHandler.git@master
+# RUN pip install git+https://github.com/kevin-tofu/coco_formatter.git@main
 
 # -e git+https://github.com/kevin-tofu/MediaHandler.git#egg=v0.0.1
 ENV http_proxy=

@@ -41,6 +41,8 @@ docker run -it -d --name yolox -p 5500:80 yolo-server
 python server.py --port 3333
 ```
 
+## How to Request
+
 ### using requests, Python
 
 ```python

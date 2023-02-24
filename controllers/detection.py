@@ -5,7 +5,7 @@ import PIL
 import numpy as np
 import cv2
 import onnxruntime as ort
-import MediaHandler
+import MediaRouter
 from typing import NamedTuple, Literal
 from controllers import functions as func
 import coco_formatter
@@ -13,7 +13,7 @@ from fastapi import BackgroundTasks
 from logconf import mylogger
 logger = mylogger(__name__)
 
-class myProcessor(MediaHandler.Processor):
+class myProcessor(MediaRouter.Processor):
     def __init__(self, cfg: NamedTuple):
         super().__init__()
 
