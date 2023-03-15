@@ -285,10 +285,10 @@ format-nongpl = ["fqdn", "idna", "isoduration", "jsonpointer (>1.13)", "rfc3339-
 [[package]]
 name = "mediarouter"
 version = "0.0.2"
-description = ""
+description = "This library provides functions for routing media such as images and videos via FastAPI."
 category = "main"
 optional = false
-python-versions = "^3.10"
+python-versions = "^3.8"
 files = []
 develop = false
 
@@ -325,8 +325,8 @@ uvicorn = ">=0.20.0"
 [package.source]
 type = "git"
 url = "https://github.com/kevin-tofu/MediaRouter.git"
-reference = "HEAD"
-resolved_reference = "feac4a9d0a23787c3ebe2c26fafff3316fa743b6"
+reference = "v0.0.2"
+resolved_reference = "b9f0aef740b25b0c4d6515fc8b5e1da68126644f"
 
 [[package]]
 name = "mpmath"
@@ -935,4 +935,4 @@ test = ["pytest (>=6.0.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "8714d2b70cf8d61723963eb370203edf008a80734f2b594f0ab642b17e2adef9"
+content-hash = "20794edabab00a6e55dbef2673d26beba7f5bdd4c6c3c850dffccd267d5a6d0e"

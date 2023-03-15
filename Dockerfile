@@ -17,17 +17,21 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 
 RUN apt-get install -y ffmpeg
-RUN apt-get install -y wget
+RUN apt-get install -y wget curl
+RUN curl -sSL https://install.python-poetry.org/ | python -
+
+
 RUN mkdir model
 RUN wget -P ./model/ ${URL_MODEL}
 # RUN mv ./model/
 
 COPY ./ ./
-COPY ./requirements.txt ./
-RUN apt-get install -y git
+# COPY ./requirements.txt ./
+# RUN ${HOME}/.local/bin/poetry install --no-dev
+RUN ${HOME}/.local/bin/poetry install --no-root
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# RUN pip install --upgrade pip
+# RUN pip install -r requirements.txt
 # RUN pip install git+https://github.com/kevin-tofu/MediaHandler.git@master
 # RUN pip install git+https://github.com/kevin-tofu/coco_formatter.git@main
 
@@ -37,4 +41,5 @@ ENV https_proxy=
 
 EXPOSE 80
 
-CMD ["python", "./server.py"]
+# CMD ["python", "./server.py"]
+CMD ["${home}/.local/bin/poetry", "run", "python", "./server.py"]

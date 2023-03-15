@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "yolo-x-server"
 version = "0.0.2"
-description = "This web server provides WEB-API for object detection model."
+description = ""
 authors = ["kohei <koheitech001@gmail.com>"]
 license = "Apach-2.0"
 readme = "README.md"
@@ -43,8 +43,8 @@ sympy = "1.11.1"
 tomli = "2.0.1"
 typing-extensions = "4.5.0"
 uvicorn = "0.20.0"
-coco-formatter = {git = "https://github.com/kevin-tofu/coco_formatter.git", rev = "v0.0.2"}
-mediarouter = {git = "https://github.com/kevin-tofu/MediaRouter.git"}
+coco-formatter = {git = "https://github.com/kevin-tofu/coco_formatter.git", rev = "v0.0.1"}
+mediarouter = {git = "https://github.com/kevin-tofu/MediaRouter.git", rev = "v0.0.2"}
 
 
 [build-system]

@@ -13,7 +13,7 @@ from fastapi import BackgroundTasks
 from logconf import mylogger
 logger = mylogger(__name__)
 
-class myProcessor(mediarouter.Processor):
+class myProcessor(mediarouter.processor):
     def __init__(self, cfg: NamedTuple):
         super().__init__()
 

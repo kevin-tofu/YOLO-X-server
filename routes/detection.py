@@ -18,9 +18,9 @@ test_config = dict(
     PATH_DATA = "./temp"
 )
 
-handler = mediarouter.Router(
+handler = mediarouter.router(
     myProcessor(config_org), 
-    mediarouter.Config(**test_config)
+    mediarouter.config(**test_config)
 )
 router = APIRouter(prefix="")
 
