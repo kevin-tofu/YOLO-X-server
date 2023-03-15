@@ -7,7 +7,7 @@ from typing import Optional, Union
 
 from PIL import Image
 from controllers.detection import myProcessor
-import MediaRouter
+import mediarouter
 import cv2
 import numpy as np
 from config import config_org
@@ -18,9 +18,9 @@ test_config = dict(
     PATH_DATA = "./temp"
 )
 
-handler = MediaRouter.Router(
+handler = mediarouter.Router(
     myProcessor(config_org), 
-    MediaRouter.Config(**test_config)
+    mediarouter.Config(**test_config)
 )
 router = APIRouter(prefix="")
 
