@@ -13,33 +13,27 @@ ARG URL_MODEL="https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0
 # ENV https_proxy HTTPS_PROXY
 
 WORKDIR /myapp
+COPY ./ ./
+
 RUN apt-get update -y
 RUN apt-get upgrade -y
 
 RUN apt-get install -y ffmpeg
 RUN apt-get install -y wget curl
-RUN curl -sSL https://install.python-poetry.org/ | python -
-
+ENV POETRY_HOME=/opt/poetry
+RUN curl -sSL https://install.python-poetry.org/  | python && \
+    cd /usr/local/bin && \
+    ln -s /opt/poetry/bin/poetry && \
+    poetry config virtualenvs.create false
 
 RUN mkdir model
-RUN wget -P ./model/ ${URL_MODEL}
-# RUN mv ./model/
+RUN wget -O ./model/yolo.onnx ${URL_MODEL}
 
-COPY ./ ./
-# COPY ./requirements.txt ./
-# RUN ${HOME}/.local/bin/poetry install --no-dev
-RUN ${HOME}/.local/bin/poetry install --no-root
 
-# RUN pip install --upgrade pip
-# RUN pip install -r requirements.txt
-# RUN pip install git+https://github.com/kevin-tofu/MediaHandler.git@master
-# RUN pip install git+https://github.com/kevin-tofu/coco_formatter.git@main
-
-# -e git+https://github.com/kevin-tofu/MediaHandler.git#egg=v0.0.1
+RUN poetry install --no-root
 ENV http_proxy=
 ENV https_proxy=
 
 EXPOSE 80
 
-# CMD ["python", "./server.py"]
-CMD ["${home}/.local/bin/poetry", "run", "python", "./server.py"]
+CMD ["python", "./server.py"]

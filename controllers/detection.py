@@ -92,7 +92,7 @@ class myProcessor(mediarouter.processor):
             convert_catid=self.cvt_catid,
             th_conf = kwargs['th_conf'],
             th_nms = kwargs['th_nms'],
-            filter_categories = kwargs['filter_categories']
+            categories = kwargs['categories']
         )
         
         return dict(
@@ -137,7 +137,7 @@ class myProcessor(mediarouter.processor):
                 convert_catid=self.cvt_catid,
                 th_conf = kwargs['th_conf'],
                 th_nms = kwargs['th_nms'],
-                filter_categories = kwargs['filter_categories']
+                categories = kwargs['categories']
             )
 
             return ret

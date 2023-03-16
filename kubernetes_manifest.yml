@@ -21,7 +21,7 @@ spec:
         - containerPort: 80
         env:
         - name: PATH_MODEL
-          value: ./model/yolox_m.onnx
+          value: ./model/yolo.onnx
 ---
 # apiVersion: v1
 # kind: Service
