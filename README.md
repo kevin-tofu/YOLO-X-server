@@ -16,8 +16,16 @@ docker build ./ --build-arg URL_MODEL=https://github.com/Megvii-BaseDetection/YO
 
 ### How to run
 
+In Docker
+
 ```bash
 docker run -it -d --name yolox -p 5500:80 yolo-server
+```
+
+In Python
+
+```python
+poetry run python3 server --port 2222
 ```
 
 ## WebAPI for YOLO-series model  
