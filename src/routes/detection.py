@@ -1,26 +1,20 @@
-import os, sys
-import io
 from fastapi import APIRouter, File, UploadFile, Header, Depends
 from fastapi import BackgroundTasks
-from fastapi import Response
 from typing import Optional, Union
 
-from PIL import Image
 from controllers.detection import myProcessor
-import mediarouter
-import cv2
-import numpy as np
+import filerouter
 from config import config_org
-
+from filerouter import processType
 from routes.detection_depends import params_detector, params_model
 
 test_config = dict(
-    PATH_DATA = "./temp"
+    data_path = "./temp"
 )
 
-handler = mediarouter.router(
+handler = filerouter.router(
     myProcessor(config_org), 
-    mediarouter.config(**test_config)
+    filerouter.config(**test_config)
 )
 router = APIRouter(prefix="")
 
@@ -33,17 +27,19 @@ async def get_model_info(
 
 @router.patch('/model')
 async def patch_model(
-    file: UploadFile = File(...), \
-    bgtask: BackgroundTasks = BackgroundTasks(),\
+    file: UploadFile = File(...),
+    bgtask: BackgroundTasks = BackgroundTasks(),
     params: dict = Depends(params_model)
 ):  
     """
     """
     
     return await handler.post_file(
-        "patch-model", \
-        file, \
-        bgtask=bgtask, \
+        "patch-model",
+        processType.FILE,
+        file,
+        None,
+        bgtask=bgtask,
         **params
     )
 
@@ -57,17 +53,18 @@ async def get_categories(
 
 @router.post('/coco_image')
 async def image(
-    file: UploadFile = File(...), \
-    bgtask: BackgroundTasks = BackgroundTasks(),\
+    file: UploadFile = File(...),
+    # bgtask: BackgroundTasks = BackgroundTasks(),
     params: dict = Depends(params_detector)
 ):  
     """
     """
     
-    return await handler.post_file_BytesIO(
-        "image-bytesio", \
-        file, \
-        bgtask, \
+    return await handler.post_file(
+        "image",
+        processType.BYTESIO,
+        file,
+        None,
         **params
     )
 
@@ -80,24 +77,34 @@ async def video(
     """
     """
 
+    # return await handler.post_file(
+    #     "video", 
+    #     file, 
+    #     "json", 
+    #     bgtask, 
+    #     **params
+    # )
     return await handler.post_file(
-        "video", 
-        file, 
-        "json", 
-        bgtask, 
+        "video",
+        processType.FILE,
+        file,
+        None,
+        bgtask=bgtask,
         **params
     )
 
 @router.post("/coco_image/")
 async def redirect_coco_image(
-    file: UploadFile = File(...), \
-    bgtask: BackgroundTasks = BackgroundTasks(),\
+    file: UploadFile = File(...),
+    bgtask: BackgroundTasks = BackgroundTasks(),
     params: dict = Depends(params_detector)
 ):
-    return await handler.post_file_BytesIO(
-        "image-bytesio", \
-        file, \
-        bgtask, \
+    return await handler.post_file(
+        "image",
+        processType.BYTESIO,
+        file,
+        None,
+        bgtask=bgtask,
         **params
     )
 
@@ -108,12 +115,14 @@ async def redirect_coco_video(
     params: dict = Depends(params_detector)
 ):
     return await handler.post_file(
-        "video", 
-        file, 
-        "json", 
-        bgtask, 
+        "video",
+        processType.FILE,
+        file,
+        None,
+        bgtask=bgtask,
         **params
     )
+
 @router.get("/categories/")
 async def redirect_categories():
     return handler.processor.get_categories()

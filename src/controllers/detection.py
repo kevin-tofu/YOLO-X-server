@@ -2,19 +2,22 @@ import io
 from typing import Optional
 import json
 import PIL
+from PIL import Image
 import numpy as np
 import cv2
 import onnxruntime as ort
-import mediarouter
+import filerouter
 from typing import NamedTuple, Literal
 from controllers import functions as func
 import coco_formatter
+from config import Config
 from fastapi import BackgroundTasks
 from logconf import mylogger
 logger = mylogger(__name__)
 
-class myProcessor(mediarouter.processor):
-    def __init__(self, cfg: NamedTuple):
+
+class myProcessor(filerouter.processor):
+    def __init__(self, cfg: Config):
         super().__init__()
 
         self.cfg = cfg
@@ -66,13 +69,50 @@ class myProcessor(mediarouter.processor):
     def get_categories(self):
         return self.categories
 
-    def coco_image(
+
+    async def post_file_process(
         self,
-        fBytesIO: io.BytesIO, \
-        fname_org: str,\
+        process_name: str,
+        data: filerouter.fileInfo | list[filerouter.fileInfo],
+        file_dst_path: Optional[str] = None,
+        bgtask: BackgroundTasks=BackgroundTasks(),
         **kwargs
     ):
-        img_pil = PIL.Image.open(fBytesIO)
+        logger.info(f"process - {process_name}")
+        if process_name == 'image':
+            return await self.coco_image(
+                data.bytesio,
+                data.name,
+                **kwargs
+            )
+        elif process_name == 'video':
+            ret = func.detection_video(
+                self.session,
+                data.path,
+                (640, 640),
+                convert_catid=self.cvt_catid,
+                th_conf = kwargs['th_conf'],
+                th_nms = kwargs['th_nms'],
+                categories = kwargs['categories']
+            )
+
+            return ret
+        elif process_name == 'patch-model':
+            self.patch_model(
+                data.path,
+                **kwargs
+            )
+            return dict(status='OK')
+        else:
+            raise ValueError('')
+
+    async def coco_image(
+        self,
+        fBytesIO: io.BytesIO,
+        fname_org: str,
+        **kwargs
+    ):
+        img_pil = Image.open(fBytesIO)
         img_np = np.asarray(img_pil)
         # print(img_np.shape) # (h, w, 3)
         img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
@@ -99,51 +139,3 @@ class myProcessor(mediarouter.processor):
             images = images,
             annotations = annotations
         )
-    
-    async def post_BytesIO_process(
-        self, \
-        process_name : Literal['image-bytesio'], \
-        fBytesIO: io.BytesIO, \
-        fname_org: str,\
-        extension: str = 'jpg',\
-        **kwargs
-    ):
-
-        logger.info(f"process - {process_name}")
-
-        # if process_name == 'image-bytesio':
-        return self.coco_image(
-            fBytesIO,
-            fname_org,
-            **kwargs
-        )
-    
-
-    async def post_file_process(
-        self, \
-        process_name: Literal['video', 'patch-model'], \
-        fpath_org: str, \
-        fpath_dst: Optional[str] = None, \
-        **kwargs
-    ) -> dict:
-
-        logger.info(f"process - {process_name}")
-        
-        if process_name == 'video':
-            ret = func.detection_video(
-                self.session,
-                fpath_org,
-                (640, 640),
-                convert_catid=self.cvt_catid,
-                th_conf = kwargs['th_conf'],
-                th_nms = kwargs['th_nms'],
-                categories = kwargs['categories']
-            )
-
-            return ret
-        elif process_name == 'patch-model':
-            self.patch_model(
-                fpath_org,
-                **kwargs
-            )
-            return dict(status='OK')

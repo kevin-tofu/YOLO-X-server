@@ -1,5 +1,6 @@
 import os
-from typing import NamedTuple
+# from typing import NamedTuple
+from dataclasses import dataclass
 
 VERSION = os.getenv('VERSION', 'v0'),
 AUTHOR = os.getenv('AUTHOR', 'kevin')
@@ -10,8 +11,8 @@ PATH_CATEGORIES = os.getenv('PATH_CATEGORIES', '')
 IMSIZE_HEIGHT = int(os.getenv('IMSIZE_HEIGHT', '640'))
 IMSIZE_WIDTH = int(os.getenv('IMSIZE_WIDTH', '640'))
 
-
-class Config(NamedTuple):
+@dataclass
+class Config():
     app_port: int
     path_model: str
     path_data: str
